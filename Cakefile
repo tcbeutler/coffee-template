@@ -122,7 +122,6 @@ log = (message, color, explanation) -> console.log color + message + reset + ' '
 # **and** pipe to process stdout and stderr respectively
 # **and** on child process exit emit callback if set and status is 0
 launch = (cmd, options=[], callback) ->
-  console.log process.env.comspec
   op = ['/c', cmd].concat options
   cp = spawn process.env.comspec, op, { stdio: 'inherit' }
   cp.on 'exit', (status) -> callback?() if status is 0
