@@ -70,6 +70,16 @@ task 'test', 'run tests', -> build -> mocha -> log ":)", green
 # ```
 task 'clean', 'clean generated files', -> clean -> log ";)", green
 
+# ## *run*
+#
+# Builds and runs the service.
+#
+# <small>Usage</small>
+#
+#'''
+#cake run
+#'''
+task 'run', 'build and start the service', -> build -> run -> log 'service running', green
 
 # Internal Functions
 #
@@ -123,7 +133,9 @@ log = (message, color, explanation) -> console.log color + message + reset + ' '
 # **and** on child process exit emit callback if set and status is 0
 launch = (cmd, options=[], callback) ->
   op = ['/c', cmd].concat options
-  cp = spawn process.env.comspec, op, { stdio: 'inherit' }
+  cp = spawn process.env.comspec, op
+  cp.stdout.on "data", (data) -> console.log data.toString()
+  cp.stderr.on "data", (data) -> console.error data.toString()
   cp.on 'exit', (status) -> callback?() if status is 0
 
 # ## *build*
@@ -204,4 +216,5 @@ mocha = (options, callback) ->
   
   launch 'node', options, callback
 
-
+run = ->
+  launch 'node', ['lib/app.js']
