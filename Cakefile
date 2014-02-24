@@ -134,9 +134,7 @@ log = (message, color, explanation) -> console.log color + message + reset + ' '
 launch = (cmd, options=[], callback) ->
   if process.platform.match(/^win/)?
     op = ['/c', cmd].concat options
-    cp = spawn process.env.comspec, op
-    cp.stdout.on "data", (data) -> console.log data.toString()
-    cp.stderr.on "data", (data) -> console.error data.toString()
+    cp = spawn process.env.comspec, op, { stdio: 'inherit' }
     cp.on 'exit', (status) -> callback?() if status is 0
   else
     app = spawn cmd, options
